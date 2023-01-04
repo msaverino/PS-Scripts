@@ -31,10 +31,10 @@ function Copy-Files {
   [CmdletBinding()]
   param(
     #[ValidateScript({ Test-Path $_ -PathType Container })]
-    [string]$src = "C:\Temp\Testiing",
+    [string]$src = "F:\",
 
     #[ValidateScript({ Test-Path $_ -PathType Container })]
-    [string]$dst = "C:\Temp\PowerShell-Test",
+    [string]$dst = "Z:\",
 
     [Parameter(Mandatory=$true)]
     [ValidateScript({ $_ -notmatch '[\\\/:*?"<>|@]' })]
