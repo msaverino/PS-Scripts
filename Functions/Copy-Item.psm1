@@ -42,8 +42,6 @@ function Copy-Files {
 
   )
 
-  Write-Host $baseFolder
-
   # Define the destination path
   $dst = "$($dst)\$($baseFolder)"
   
