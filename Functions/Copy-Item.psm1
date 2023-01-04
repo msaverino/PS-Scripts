@@ -46,11 +46,11 @@ function Copy-Files {
 
   # Define the destination path
   $dst = "$($dst)\$($baseFolder)"
-  Write-Host $dst
+  
 
   # Create the destination folder if it doesn't exist
   if (!(Test-Path $dst)) {
-    New-Item $dst -ItemType Directory
+    New-Item $dst -ItemType Directory | Out-Null
   }
 
   # Get a list of all image files in the source path
@@ -60,7 +60,7 @@ function Copy-Files {
   foreach ($file in $files) {
     # Calculate the MD5 hash of the file
     $hash = (Get-FileHash $file.FullName).Hash
-    Write-Host $i
+    
 
     # Determine the destination folder based on the file extension
     $ext = $file.Extension
@@ -75,7 +75,7 @@ function Copy-Files {
 
     # Create the destination folder if it doesn't exist
     if (!(Test-Path "$dst\$folder")) {
-      New-Item "$dst\$folder" -ItemType Directory
+      New-Item "$dst\$folder" -ItemType Directory | Out-Null
     }
 
     $i = 0
@@ -87,7 +87,7 @@ function Copy-Files {
     $newName = "$i - $($file.Name)"
 
     # Copy the file to the destination folder with the new name
-    Copy-Item $file.FullName "$dst\$folder\$newName"
+    Copy-Item $file.FullName "$dst\$folder\$newName" | Out-Null
 
     # Calculate the MD5 hash of the copied file
     $copiedHash = (Get-FileHash "$dst\$folder\$newName").Hash
