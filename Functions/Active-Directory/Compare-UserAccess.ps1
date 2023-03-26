@@ -1,9 +1,9 @@
 <#
 	.SYNOPSIS
-	A PowerShell function to compare user access in different domains and highlight the differences in an Excel file.
+	A PowerShell function to compare user access and highlight the differences in an Excel file.
 
 	.DESCRIPTION
-	The Compare-UserAccess function allows you to compare the access rights of one or more users in different domains and output the results in an Excel file. The function supports highlighting the differences in access rights between the domains with color-coded boxes.
+	The Compare-UserAccess function allows you to compare the access rights of multiple users and output the results in an Excel file. The function supports highlighting the differences in access rights between the users with color-coded boxes.
 
 	.PARAMETER Users
 	A string array of the user(s) you would like to lookup.
@@ -12,7 +12,7 @@
 	The output folder and file name of the Excel file. If the file already exists, the function will append to it.
 
 	.PARAMETER Domain
-	The domain(s) you would like to lookup. This can be a string array if you want to compare more than two domains.
+	The domain you would like to lookup. This can be a string array if you want to compare more than two domains.
 
 	.PARAMETER ColorBoxes
 	A switch parameter to choose whether to highlight the differences in access rights between the domains with color-coded boxes. The default value is $false.
