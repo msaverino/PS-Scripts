@@ -51,7 +51,7 @@ function Compare-UserAccess
 		[Parameter(Position = 3)]
 		[Alias('Server')]
 		[string]$Domain = $env:USERDNSDOMAIN,
-		[Parameter(Position = 5)]
+		[Parameter(Position = 4)]
 		[Alias('HighlightBoxes')]
 		[bool]$ColorBoxes = $false
 	)
