@@ -25,7 +25,9 @@
 		Gets the broken SIDs in the GPO named 'Default Domain Policy', using pipeline input to pass the GPO object to the function.
 	
 	.NOTES
-		Additional information about the function.
+		Author: Michael Saverino
+		Date: 03/26/2023
+		Version: 1.0
 #>
 function Get-GPOUnkownSids
 {
