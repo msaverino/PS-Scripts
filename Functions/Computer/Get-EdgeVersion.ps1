@@ -25,7 +25,7 @@ function Get-EdgeVersion {
     [CmdletBinding()]
     param (
         # Remote Computer Name
-        [Parameter(Mandatory=$false, ValueFromPipeline=$true)]
+        [Parameter(Mandatory = $false, ValueFromPipeline = $true)]
         [Alias('RemoteComputer', 'Computer')]
         [string]
         $ComputerName = $env:COMPUTERNAME
@@ -33,20 +33,22 @@ function Get-EdgeVersion {
 
     begin {
         $localAddress = @("127.0.0.1", "localhost", ".", "$($env:COMPUTERNAME)")
-        $scriptBlock = [scriptblock]{
+        $scriptBlock = [scriptblock] {
             $edgeExe = Get-ItemPropertyValue "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\msedge.exe" "(default)"
             return (Get-Item $edgeExe).VersionInfo.ProductVersion
         }
     }
     
     process {
-        if ($localAddress -contains $ComputerName){
+        if ($localAddress -contains $ComputerName) {
             $edgeExe = Get-ItemPropertyValue "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\msedge.exe" "(default)"
             (Get-Item $edgeExe).VersionInfo.ProductVersion
-        } else {
+        }
+        else {
             try {
                 Invoke-Command -ComputerName $ComputerName -ScriptBlock $scriptBlock -ErrorAction Stop
-            } catch {
+            }
+            catch {
                 Write-Error -Message "Could not connect to computer '$ComputerName'."
             }
         }

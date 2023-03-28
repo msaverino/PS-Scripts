@@ -29,48 +29,41 @@
 		Date: 03/26/2023
 		Version: 1.0
 #>
-function Get-GPOUnkownSids
-{
+function Get-GPOUnkownSids {
 	[CmdletBinding(DefaultParameterSetName = 'ByDisplayName')]
 	param
 	(
 		[Parameter(ParameterSetName = 'ById',
-				   Mandatory = $true)]
+			Mandatory = $true)]
 		[ValidateNotNullOrEmpty()]
 		[Alias('Identity')]
 		[string]$Id,
 		[Parameter(ParameterSetName = 'ByDisplayName',
-				   Mandatory = $true,
-				   ValueFromPipelineByPropertyName = $true)]
+			Mandatory = $true,
+			ValueFromPipelineByPropertyName = $true)]
 		[Alias('GpoDisplayName', 'Name')]
 		[string]$DisplayName,
 		[string]$Server = $env:USERDOMAIN
 	)
 	
-	begin
-	{
+	begin {
 		# Import the Group Policy module if not already loaded
-		if (-not (Get-Module GroupPolicy))
-		{
+		if (-not (Get-Module GroupPolicy)) {
 			Import-Module GroupPolicy
 		}
 	}
 	
-	Process
-	{
+	Process {
 		# Find the GPO
-		if ($Id)
-		{
+		if ($Id) {
 			$gpo = Get-GPO -Server $Server -Id $Id -ErrorAction SilentlyContinue
 		}
-		elseif ($DisplayName)
-		{
+		elseif ($DisplayName) {
 			$gpo = Get-GPO -Server $Server -DisplayName $DisplayName -ErrorAction SilentlyContinue
 		}
 		
 		# Validate the GPO exists
-		if (-not ($gpo))
-		{
+		if (-not ($gpo)) {
 			Write-Warning "GPO not found on server $Server."
 			return
 		}
@@ -78,8 +71,7 @@ function Get-GPOUnkownSids
 		# Find all the broken SIDs.
 		$unkownSids = (Get-GPPermissions -Guid $gpo.Id -All | Select-Object -ExpandProperty Trustee | Where-Object { $_.SidType -eq "Unknown" } | Select-Object -ExpandProperty Sid).Value
 		
-		if (-not ($unkownSids))
-		{
+		if (-not ($unkownSids)) {
 			Write-Verbose "There are no Unkown SIDS."
 		}
 		return $unkownSids

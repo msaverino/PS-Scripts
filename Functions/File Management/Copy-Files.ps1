@@ -64,9 +64,11 @@ function Copy-Files {
     $ext = $file.Extension
     if ($ext -eq ".jpg" -or $ext -eq ".jpeg" -or $ext -eq ".png" -or $ext -eq ".gif" -or $ext -eq ".bmp") {
       $folder = "Images"
-    } elseif ($ext -eq ".mp4" -or $ext -eq ".avi" -or $ext -eq ".mov") {
+    }
+    elseif ($ext -eq ".mp4" -or $ext -eq ".avi" -or $ext -eq ".mov") {
       $folder = "Videos"
-    } else {
+    }
+    else {
       # Unknown file type, skip this file
       continue
     }

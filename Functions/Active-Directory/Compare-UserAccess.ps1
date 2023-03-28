@@ -31,20 +31,19 @@
 
 
 
-function Compare-UserAccess
-{
+function Compare-UserAccess {
 	[CmdletBinding()]
 	param
 	(
 		[Parameter(Mandatory = $true,
-				   ValueFromPipeline = $true,
-				   ValueFromPipelineByPropertyName = $true,
-				   Position = 1)]
+			ValueFromPipeline = $true,
+			ValueFromPipelineByPropertyName = $true,
+			Position = 1)]
 		[ValidateNotNullOrEmpty()]
 		[Alias('Accounts', 'Profiles')]
 		[string[]]$Users,
 		[Parameter(Mandatory = $true,
-				   Position = 2)]
+			Position = 2)]
 		[ValidateNotNullOrEmpty()]
 		[Alias('Excel', 'Dir', 'ExcelPath')]
 		[string]$ExcelFilePath,
@@ -76,22 +75,19 @@ function Compare-UserAccess
 	$col++
 	
 	# Write the user names to the spreadsheet
-	foreach ($user in $Users)
-	{
+	foreach ($user in $Users) {
 		$displayName = (Get-ADUser -Identity $user -Properties DisplayName | Select-Object -Property DisplayName).DisplayName
 		$worksheet.Cells.Item($row, $col) = "$user ($displayName)"
 		$col++
 	}
 	
 	# Get a list of all groups that at least one of the users is a member of
-	$groups = foreach ($user in $Users)
-	{
+	$groups = foreach ($user in $Users) {
 		Get-ADUser -Server $Domain -Identity $user -Properties MemberOf | Select-Object -ExpandProperty MemberOf | Get-ADGroup -Server $Domain -Properties Description, Info | Select-Object Name, Description, Info -Unique
 	}
 	
 	# Loop through each group and check which users are members
-	foreach ($group in $groups)
-	{
+	foreach ($group in $groups) {
 		$groupRow = $row + 1
 		$groupCol = 1
 		
@@ -103,23 +99,18 @@ function Compare-UserAccess
 		$worksheet.Cells.Item($groupRow, $groupCol) = $group.Info
 		
 		# Loop through each user and check if they are a member of the group
-		foreach ($user in $Users)
-		{
+		foreach ($user in $Users) {
 			$userCol = $Users.IndexOf($user) + 4
 			$isMember = (Get-ADUser -Server $Domain -Identity $user -Properties MemberOf).MemberOf | Get-ADGroup -Server $Domain | Where-Object { $_.Name -eq $group.Name } | Select-Object -First 1
-			if ($isMember)
-			{
+			if ($isMember) {
 				$worksheet.Cells.Item($groupRow, $userCol) = "Yes"
-				if ($ColorBoxes)
-				{
+				if ($ColorBoxes) {
 					$worksheet.Cells.Item($groupRow, $userCol).Interior.ColorIndex = 4 # Set the cell background color to red
 				}
 			}
-			else
-			{
+			else {
 				$worksheet.Cells.Item($groupRow, $userCol) = "No"
-				if ($ColorBoxes)
-				{
+				if ($ColorBoxes) {
 					$worksheet.Cells.Item($groupRow, $userCol).Interior.ColorIndex = 3 # Set the cell background color to red
 				}
 			}
@@ -127,8 +118,7 @@ function Compare-UserAccess
 		
 		# Set the cell background color to green if all users are members of the group
 		$groupMembers = Get-ADGroupMember -Server $Domain -Identity $group.Name -Recursive | Select-Object -ExpandProperty SamAccountName
-		if (($groupMembers | Where-Object { $Users -contains $_ }).Count -eq $Users.Count)
-		{
+		if (($groupMembers | Where-Object { $Users -contains $_ }).Count -eq $Users.Count) {
 			$worksheet.Range("A$groupRow:X$groupRow").Interior.ColorIndex = 4 # Set the cell background color to green
 		}
 		

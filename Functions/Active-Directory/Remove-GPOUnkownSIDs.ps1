@@ -27,49 +27,42 @@
 		Date: 03/26/2023
 		Version: 1.0
 #>
-function Remove-GPOUnknownSIDs
-{
+function Remove-GPOUnknownSIDs {
 	[CmdletBinding(DefaultParameterSetName = 'ByDisplayName',
-				   SupportsShouldProcess = $true)]
+		SupportsShouldProcess = $true)]
 	param
 	(
 		[Parameter(ParameterSetName = 'ById',
-				   Mandatory = $true)]
+			Mandatory = $true)]
 		[ValidateNotNullOrEmpty()]
 		[Alias('Identity')]
 		[string]$Id,
 		[Parameter(ParameterSetName = 'ByDisplayName',
-				   Mandatory = $true,
-				   ValueFromPipelineByPropertyName = $true)]
+			Mandatory = $true,
+			ValueFromPipelineByPropertyName = $true)]
 		[Alias('GpoDisplayName', 'Name')]
 		[string]$DisplayName,
 		[string]$Server = $env:USERDOMAIN
 	)
 	
-	begin
-	{
+	begin {
 		# Import the Group Policy module if not already loaded
-		if (-not (Get-Module GroupPolicy))
-		{
+		if (-not (Get-Module GroupPolicy)) {
 			Import-Module GroupPolicy
 		}
 	}
 	
-	Process
-	{
+	Process {
 		# Find the GPO
-		if ($Id)
-		{
+		if ($Id) {
 			$gpo = Get-GPO -Server $Server -Id $Id -ErrorAction SilentlyContinue
 		}
-		elseif ($DisplayName)
-		{
+		elseif ($DisplayName) {
 			$gpo = Get-GPO -Server $Server -DisplayName $DisplayName -ErrorAction SilentlyContinue
 		}
 		
 		# Validate the GPO exists
-		if (-not ($gpo))
-		{
+		if (-not ($gpo)) {
 			Write-Warning "GPO not found on server $Server."
 			return
 		}
@@ -81,8 +74,7 @@ function Remove-GPOUnknownSIDs
 		$unknownSIDS = (Get-GPPermissions -Guid $gpo.Id -All | Select-Object -ExpandProperty Trustee | Where-Object { $_.SidType -eq "Unknown" } | Select-Object -ExpandProperty Sid).Value
 		
 		# Validate we have broken SID's
-		if (-not ($unknownSIDS))
-		{
+		if (-not ($unknownSIDS)) {
 			# Return if we do not have any.
 			Write-Verbose "No Unkown SIDs for $($gpo.DisplayName)"
 			return
@@ -90,19 +82,16 @@ function Remove-GPOUnknownSIDs
 		
 		
 		Write-Verbose "There are a total of $($unknownSIDS.Count) unkown Sid(s)."
-		foreach ($unknownsid in $unknownSIDS)
-		{
+		foreach ($unknownsid in $unknownSIDS) {
 			# If we have "-WhatIf"
-			if ($PSCmdlet.ShouldProcess($gpo.DisplayName, "Remove SID $unknownsid"))
-			{
+			if ($PSCmdlet.ShouldProcess($gpo.DisplayName, "Remove SID $unknownsid")) {
 				Write-Verbose "Removing SID $unknownsid"
 				$gposecurity.RemoveTrustee($unknownsid)
 			}
 		}
 		
 		# Commit the change.
-		if ($PSCmdlet.ShouldProcess($gpo.DisplayName, "Save Changes"))
-		{
+		if ($PSCmdlet.ShouldProcess($gpo.DisplayName, "Save Changes")) {
 			$GPO.SetSecurityInfo($gposecurity)
 		}
 	}

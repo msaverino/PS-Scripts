@@ -17,13 +17,12 @@
 	Date: 03/26/2023
 	Version: 1.0
 #>
-function Set-GPOOwner
-{
+function Set-GPOOwner {
 	[CmdletBinding()]
 	param
 	(
 		[Parameter(Mandatory = $true,
-				   ValueFromPipeline = $true)]
+			ValueFromPipeline = $true)]
 		[string]$GPOId,
 		[string]$Domain = 'ad.saverino.win',
 		[string]$GroupName = 'Domain Admins'
@@ -35,8 +34,7 @@ function Set-GPOOwner
 	# Process each GPO ID passed in via pipeline
 	Process
 	{
-		try
-		{
+		try {
 			# Format the GPO ID as a string
 			$WorkingGPOID = "{$GPOID}"
 			
@@ -55,8 +53,7 @@ function Set-GPOOwner
 			# Set the ACL on the GPO object
 			Set-Acl -Path "ad:$($GPO.DistinguishedName)" -AclObject $ACL
 		}
-		catch
-		{
+		catch {
 			Write-Host "Unable to update the GPO: $($WorkingGPO)" -BackgroundColor Red -ForegroundColor white
 		}
 	}

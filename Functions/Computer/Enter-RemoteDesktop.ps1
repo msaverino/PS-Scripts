@@ -32,37 +32,35 @@
 
 		This example will connect to the remote computer "WKS01" in with the display of 1920x1080.
 #>
-function Enter-RemoteDesktop
-{
+function Enter-RemoteDesktop {
 	[CmdletBinding(DefaultParameterSetName = 'WH')]
 	param
 	(
 		[Parameter(ParameterSetName = 'WH',
-				   Mandatory=$false,
-				   Position = 2)]
+			Mandatory = $false,
+			Position = 2)]
 		[int]$Width = 1366,
 		[Parameter(ParameterSetName = 'WH',
-				   Mandatory=$false,
-				   Position = 3)]
+			Mandatory = $false,
+			Position = 3)]
 		[int]$Height = 768,
 		[Parameter(ParameterSetName = 'FullScreen',
-				   Position = 2)]
+			Position = 2)]
 		[switch]$FullScreen,
 		[Parameter(Mandatory = $true,
-				   Position = 1)]
+			Position = 1)]
 		[Alias('RemoteComputer', 'Computer')]
 		[string]$ComputerName
 	)
 	
-	switch ($PsCmdlet.ParameterSetName)
-	{
+	switch ($PsCmdlet.ParameterSetName) {
 		'WH' {
-            # Defines the Width and Height
+			# Defines the Width and Height
 			$spArguments = "/v:$ComputerName /w:$Width /h:$Height"
 			break
 		}
 		'FullScreen' {
-            # Defines Full Screen
+			# Defines Full Screen
 			$spArguments = "/v:$ComputerName /f"
 			break
 		}
