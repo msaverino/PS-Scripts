@@ -28,11 +28,13 @@ function Set-GPOOwner {
 		[string]$GroupName = 'Domain Admins'
 	)
 	
-	# Get the specified Active Directory group
-	$DomainGroup = Get-ADGroup -Identity $GroupName -Server $Domain
+	begin {
+		# Get the specified Active Directory group
+		$DomainGroup = Get-ADGroup -Identity $GroupName -Server $Domain
+	}
 	
 	# Process each GPO ID passed in via pipeline
-	Process
+	process
 	{
 		try {
 			# Format the GPO ID as a string
